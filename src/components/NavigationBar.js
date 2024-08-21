@@ -1,8 +1,9 @@
+// src/components/NavigationBar.js
 import React from "react";
 import "./NavigationBar.css"; // CSS 파일을 임포트
 import { ReactComponent as SearchIcon } from "../assets/icon=search.svg";
 
-const NavigationBar = ({ onToggleView, onSortChange }) => {
+const NavigationBar = ({ viewPrivate, onToggleView, onSortChange }) => {
   const handleButtonClick = (view) => {
     onToggleView(view === "private");
   };
@@ -15,13 +16,13 @@ const NavigationBar = ({ onToggleView, onSortChange }) => {
     <div className="navbar-container">
       <div className="button-group">
         <button
-          className="nav-button active"
+          className={`nav-button ${!viewPrivate ? "active" : ""}`}
           onClick={() => handleButtonClick("public")}
         >
           공개
         </button>
         <button
-          className="nav-button"
+          className={`nav-button ${viewPrivate ? "active" : ""}`}
           onClick={() => handleButtonClick("private")}
         >
           비공개

@@ -15,6 +15,7 @@
   gap: 10px;
 }
 
+/* src/components/NavigationBar.css */
 .nav-button {
   padding: 10px 20px;
   border: none;
@@ -23,6 +24,7 @@
   color: #282828;
   font-size: 1em;
   cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .nav-button.active {

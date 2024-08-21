@@ -33,6 +33,24 @@ export async function fetchGroups({
   return await response.json();
 }
 
+// src/api.js
+
+export async function fetchPrivateGroups({ sortBy, keyword, page, pageSize }) {
+  const queryParams = new URLSearchParams({
+    isPublic: false, // 비공개 그룹만 가져오도록 설정
+    sortBy,
+    keyword,
+    page,
+    pageSize,
+  });
+
+  const response = await fetch(`/api/groups?${queryParams.toString()}`);
+  if (!response.ok) {
+    throw new Error("Failed to fetch private groups");
+  }
+  return await response.json();
+}
+
 // 그룹 상세 조회 API
 export async function fetchGroupDetails(groupId) {
   const response = await fetch(`/api/groups/${groupId}`);

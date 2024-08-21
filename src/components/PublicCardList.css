@@ -28,3 +28,20 @@
   background-color: #aaa;
   cursor: not-allowed;
 }
+.empty-state-container {
+  text-align: center;
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Align items in the center horizontally */
+}
+
+.no-group-icon {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 20px;
+}
+
+.create-button-wrapper {
+  margin-top: 100px; /* This might be redundant but ensures spacing */
+}

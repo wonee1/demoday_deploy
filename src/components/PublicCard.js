@@ -3,7 +3,7 @@ import "./PublicCard.css";
 import { likeGroup } from "../api"; // 공감하기 API 임포트
 import { ReactComponent as LikeIcon } from "../assets/icon=flower.svg";
 
-const GroupCard = ({ group, showBadges = true }) => {
+const GroupCard = ({ group, showBadges = true, onClick }) => {
   const handleLike = async () => {
     try {
       await likeGroup(group.id);
@@ -17,7 +17,7 @@ const GroupCard = ({ group, showBadges = true }) => {
   const ImageComponent = group.image;
 
   return (
-    <div className="card-container">
+    <div className="card-container" onClick={onClick}>
       {ImageComponent && (
         <div className="card-image-container">
           {/* <ImageComponent width="100%" height="auto" /> */}

@@ -1,8 +1,10 @@
+// src/pages/HomePage.js
 import React, { useState } from "react";
 import Header from "../components/Header";
 import NavigationBar from "../components/NavigationBar";
 import PublicCardList from "../components/PublicCardList";
 import PrivateCardList from "../components/PrivateCardList";
+import CreateGroupButton from "../components/CreateGroupButton"; // "그룹 만들기" 버튼 컴포넌트 임포트
 import "./HomePage.css";
 
 function HomePage() {
@@ -24,12 +26,16 @@ function HomePage() {
 
   return (
     <div className="homePage">
-      <Header />
+      <div className="header-container">
+        <Header />
+        <CreateGroupButton className="header-create-group-button" />{" "}
+        {/* "그룹 만들기" 버튼을 헤더 옆에 배치 */}
+      </div>
       <NavigationBar
         viewPrivate={viewPrivate}
         onToggleView={handleToggleView}
         onSortChange={handleSortChange}
-        onSearch={handleSearch} // 검색 기능 추가
+        onSearch={handleSearch}
       />
       <div className="groupCardListContainer">
         {viewPrivate ? (
