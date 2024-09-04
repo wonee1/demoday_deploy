@@ -3,11 +3,12 @@ import "./CreateGroupPage.css"; // 페이지 스타일
 import Header from "../components/Header";
 import SuccessModal from "../components/SuccessModal"; // 성공 모달 컴포넌트
 import ErrorModal from "../components/ErrorModal"; // 에러 모달 컴포넌트
+import axios from "axios";
 
 function CreateGroupPage() {
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
-  const [image, setImage] = useState(null);
+  const [imageFile, setImageFile] = useState(null); // 이미지 파일 상태
   const [isPublic, setIsPublic] = useState(true);
   const [introduction, setIntroduction] = useState("");
   const [showSuccessModal, setShowSuccessModal] = useState(false);
@@ -16,31 +17,53 @@ function CreateGroupPage() {
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setImage(file);
+      setImageFile(file);
+    }
+  };
+
+  // 이미지 업로드 API 호출
+  const uploadImage = async () => {
+    const formData = new FormData();
+    formData.append("image", imageFile);
+
+    try {
+      const response = await axios.post("/api/image", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status === 200) {
+        return response.data.imageUrl; // 서버로부터 받은 imageUrl 반환
+      } else {
+        throw new Error("이미지 업로드에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("이미지 업로드 오류:", error);
+      throw error;
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // 실제 API 호출로 데이터 전송 로직 추가
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("password", password);
-    if (image) formData.append("imageUrl", image);
-    formData.append("isPublic", isPublic);
-    formData.append("introduction", introduction);
 
     try {
-      const response = await fetch("/api/groups", {
-        method: "POST",
-        body: formData,
-      });
+      // 이미지 업로드 먼저 처리
+      const imageUrl = imageFile ? await uploadImage() : "";
 
-      if (response.ok) {
-        // 성공적으로 그룹이 생성되었을 때의 로직
+      const requestBody = {
+        name,
+        password,
+        imageUrl, // 업로드된 이미지 URL 사용
+        isPublic,
+        introduction,
+      };
+
+      const response = await axios.post("/api/groups", requestBody);
+
+      if (response.status === 201) {
         setShowSuccessModal(true);
       } else {
-        // 에러 처리
         setShowErrorModal(true);
       }
     } catch (error) {
@@ -75,7 +98,7 @@ function CreateGroupPage() {
           <div className="image-upload">
             <input
               type="text"
-              value={image ? image.name : "파일을 선택해 주세요"}
+              value={imageFile ? imageFile.name : "파일을 선택해 주세요"}
               readOnly
               className="file-input-display"
             />

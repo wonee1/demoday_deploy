@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import "./PrivateAccessPage.css";
+import Header from "../components/Header";
 import PrivateAccessModal from "../components/PrivateAccessModal"; // Import the PrivateAccessModal component
 
 const PrivateAccessPage = () => {
@@ -26,10 +27,14 @@ const PrivateAccessPage = () => {
       if (response.ok) {
         // On successful password verification, navigate to the group details page
         navigate(`/groups/${groupId}`);
+      } else if (response.status === 401) {
+        // Handle incorrect password error
+        setError("비밀번호가 틀렸습니다");
+        setShowModal(true); // Show the modal on error
       } else {
-        // Handle password error
+        // Handle other errors
         const errorData = await response.json();
-        setError(errorData.message || "비밀번호가 틀렸습니다");
+        setError(errorData.message || "비밀번호 확인 중 오류가 발생했습니다.");
         setShowModal(true); // Show the modal on error
       }
     } catch (error) {
@@ -45,6 +50,9 @@ const PrivateAccessPage = () => {
 
   return (
     <div className="private-access-page">
+      <div className="header-container">
+        <Header />
+      </div>
       <h1>비공개 그룹</h1>
       <p>비공개 그룹에 접근하기 위해 관련 권한이 필요합니다.</p>
       <form onSubmit={handlePasswordSubmit}>
@@ -69,7 +77,7 @@ const PrivateAccessPage = () => {
         show={showModal}
         onClose={handleCloseModal}
         title="비공개 그룹 접근 실패"
-        message="비밀번호가 일치하지 않습니다."
+        message={error}
       />
     </div>
   );

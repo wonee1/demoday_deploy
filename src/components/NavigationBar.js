@@ -2,7 +2,6 @@
 import React from "react";
 import "./NavigationBar.css"; // CSS 파일을 임포트
 import { ReactComponent as SearchIcon } from "../assets/icon=search.svg";
-
 const NavigationBar = ({ viewPrivate, onToggleView, onSortChange }) => {
   const handleButtonClick = (view) => {
     onToggleView(view === "private");
@@ -30,11 +29,7 @@ const NavigationBar = ({ viewPrivate, onToggleView, onSortChange }) => {
       </div>
       <div className="search-container">
         <SearchIcon width="20px" height="20px" />
-        <input
-          className="search-input"
-          type="text"
-          placeholder="그룹명을 검색해 주세요"
-        />
+        <input className="search-input" placeholder="그룹명을 검색해 주세요" />
       </div>
       <select className="sort-dropdown" onChange={handleSortChange}>
         <option value="likes">공감순</option>
