@@ -5,6 +5,9 @@ import "./GroupDeleteModal.css";
 const GroupDeleteModal = ({ isOpen, onClose, onDelete, groupId }) => {
   const [password, setPassword] = useState("");
 
+  // groupId 디버깅 로그 추가
+  console.log("Received groupId in GroupDeleteModal:", groupId);
+
   if (!isOpen) return null;
 
   const handleDelete = async () => {

@@ -1,9 +1,9 @@
 //그룹 등록 
-POST http://localhost:5000/api/groups
+POST http://localhost:3000/api/groups
 Content-Type: application/json
 
 {
-    "name": "Sample Group",
+    "name": "Group",
     "password": "12345",
     "imageUrl": "http://example.com/image.jpg",
     "isPublic": true,

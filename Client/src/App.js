@@ -43,10 +43,13 @@ function App() {
         />
         <Route path="/groups/:groupId" element={<PublicDetailPage />} />{" "}
         {/* 그룹 상세 페이지 라우트 추가 */}
-        <Route path="/upload-memory" element={<UploadMemory />} />{" "}
+        <Route
+          path="/groups/:groupId/upload-memory"
+          element={<UploadMemory />}
+        />{" "}
         {/* 추억 올리기 페이지 라우트 추가 */}
         {/* <Route path="*" element={<NotFoundPage />} /> 404 페이지 라우트 */}
-        <Route path="/memories/:memoryId" element={<MemoryDetailPage />} />
+        <Route path="/posts/:postId" element={<MemoryDetailPage />} />
       </Routes>
     </Router>
   );

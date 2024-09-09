@@ -213,9 +213,10 @@ input:checked + .slider:before {
 }
 .close-button {
   position: absolute;
-  top: 210px;
-  right: 50px;
-  width: 24px;
-  height: 24px;
+  top: 0px;
+  right: 10px;
+  width: 20px;
+  background-color: transparent;
+  height: 20px;
   cursor: pointer;
 }

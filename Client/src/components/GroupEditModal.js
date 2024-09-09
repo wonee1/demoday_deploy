@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./GroupEditModal.css";
+import { useNavigate } from "react-router-dom";
 
 const GroupEditModal = ({ isOpen, onClose, groupDetails, onSubmit }) => {
   const [formState, setFormState] = useState({
@@ -11,15 +12,17 @@ const GroupEditModal = ({ isOpen, onClose, groupDetails, onSubmit }) => {
     password: "",
   });
   const [imageFile, setImageFile] = useState(null); // 이미지 파일 저장
+  const navigate = useNavigate();
 
+  // 그룹 정보가 변경될 때마다 초기화하는 useEffect
   useEffect(() => {
     if (groupDetails) {
       setFormState({
-        name: groupDetails.name || "",
-        image: groupDetails.image || "", // groupDetails의 image를 기본값으로 설정
-        description: groupDetails.description || "",
-        isPublic: groupDetails.isPublic || true,
-        password: "",
+        name: groupDetails.name || "", // 그룹명 초기값 설정
+        image: groupDetails.image || "", // 그룹 이미지 초기값 설정
+        description: groupDetails.description || "", // 그룹 소개 초기값 설정
+        isPublic: groupDetails.isPublic || false, // 공개 여부 초기값 설정
+        password: "", // 비밀번호는 사용자가 입력해야 하므로 빈 문자열 유지
       });
     }
   }, [groupDetails]);
@@ -56,7 +59,7 @@ const GroupEditModal = ({ isOpen, onClose, groupDetails, onSubmit }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      let imageUrl = formState.image;
+      let imageUrl = formState.image; // 기본 이미지가 변경되지 않으면 기존 이미지를 사용
       // 이미지 파일이 변경되었을 때만 업로드 처리
       if (imageFile) {
         imageUrl = await uploadImage();
@@ -74,6 +77,7 @@ const GroupEditModal = ({ isOpen, onClose, groupDetails, onSubmit }) => {
         console.log("그룹 정보 수정 성공");
         onSubmit(response.data); // 수정 성공 후 콜백 실행
         onClose(); // 모달 닫기
+        navigate(`/groups/${groupDetails.id}`); // 그룹 상세 페이지로 이동
       }
     } catch (error) {
       console.error(
@@ -81,11 +85,11 @@ const GroupEditModal = ({ isOpen, onClose, groupDetails, onSubmit }) => {
         error.response?.data?.message || error.message
       );
 
-      if (error.response.status === 403) {
+      if (error.response?.status === 403) {
         alert("비밀번호가 틀렸습니다.");
-      } else if (error.response.status === 400) {
+      } else if (error.response?.status === 400) {
         alert("잘못된 요청입니다.");
-      } else if (error.response.status === 404) {
+      } else if (error.response?.status === 404) {
         alert("그룹이 존재하지 않습니다.");
       } else {
         alert("수정에 실패했습니다. 다시 시도해주세요.");
@@ -106,7 +110,7 @@ const GroupEditModal = ({ isOpen, onClose, groupDetails, onSubmit }) => {
             <input
               type="text"
               name="name"
-              value={formState.name}
+              value={formState.name} // 그룹명은 formState에서 가져옴
               onChange={(e) =>
                 setFormState({ ...formState, name: e.target.value })
               }
@@ -149,7 +153,7 @@ const GroupEditModal = ({ isOpen, onClose, groupDetails, onSubmit }) => {
             <label>그룹 소개</label>
             <textarea
               name="description"
-              value={formState.description}
+              value={formState.description} // 그룹 소개는 formState에서 가져옴
               onChange={(e) =>
                 setFormState({ ...formState, description: e.target.value })
               }
@@ -161,27 +165,28 @@ const GroupEditModal = ({ isOpen, onClose, groupDetails, onSubmit }) => {
             <label>그룹 공개 선택</label>
             <div className="groupedit-switch-container">
               <span className="groupedit-switch-label">
-                {formState.isPublic ? "공개" : "비공개"}
+                {formState.isPublic ? "공개" : "비공개"} {/* 공개 여부 표시 */}
               </span>
               <label className="groupedit-switch">
                 <input
                   type="checkbox"
                   name="isPublic"
-                  checked={formState.isPublic}
+                  checked={formState.isPublic} // 공개 여부를 formState에서 가져옴
                   onChange={(e) =>
                     setFormState({ ...formState, isPublic: e.target.checked })
                   }
                 />
-                <span className="groupeidt-slider round"></span>
+                <span className="groupedit-slider round"></span>
               </label>
             </div>
           </div>
+
           <div className="edit-form-group">
             <label>수정 권한 인증</label>
             <input
               type="password"
               name="password"
-              value={formState.password}
+              value={formState.password} // 비밀번호 입력
               onChange={(e) =>
                 setFormState({ ...formState, password: e.target.value })
               }

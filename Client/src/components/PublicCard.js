@@ -4,7 +4,7 @@ import { likeGroup } from "../api";
 import { ReactComponent as LikeIcon } from "../assets/icon=flower.svg";
 import { useNavigate } from "react-router-dom";
 
-const PublicCard = ({ group, showBadges = true }) => {
+const PublicCard = ({ group, showBadges = true, showImage = true }) => {
   const navigate = useNavigate();
 
   const handleLike = async (event) => {
@@ -23,7 +23,7 @@ const PublicCard = ({ group, showBadges = true }) => {
 
   return (
     <div className="card-container" onClick={handleCardClick}>
-      {group.imageUrl && (
+      {showImage && group.imageUrl && (
         <div className="card-image-container">
           <img
             src={group.imageUrl}

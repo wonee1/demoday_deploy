@@ -14,57 +14,59 @@ import EditIcon from "../assets/icon=edit.svg";
 import DeleteIcon from "../assets/icon=delete.svg";
 
 const MemoryDetailPage = () => {
-  const { memoryId } = useParams();
-  const [memoryDetail, setMemoryDetail] = useState(null);
-  const [comments, setComments] = useState([]);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-  const [isCommentEditModalOpen, setIsCommentEditModalOpen] = useState(false);
+  const { postId } = useParams(); // postId 경로 파라미터 받기
+  const [memoryDetail, setPostDetail] = useState(null); // 게시물 상세 정보 상태
+  const [comments, setComments] = useState([]); // 댓글 상태
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 수정 모달 상태
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // 삭제 모달 상태
+  const [isCommentModalOpen, setIsCommentModalOpen] = useState(false); // 댓글 작성 모달 상태
+  const [isCommentEditModalOpen, setIsCommentEditModalOpen] = useState(false); // 댓글 수정 모달 상태
   const [isCommentDeleteModalOpen, setIsCommentDeleteModalOpen] =
-    useState(false);
-  const [currentComment, setCurrentComment] = useState(null);
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+    useState(false); // 댓글 삭제 모달 상태
+  const [currentComment, setCurrentComment] = useState(null); // 현재 수정/삭제할 댓글 상태
+  const [page, setPage] = useState(1); // 현재 페이지 상태
+  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수 상태
 
-  // 게시글 상세 정보 API 호출
-  const fetchMemoryDetail = useCallback(async () => {
+  // 게시물 상세 정보 가져오기
+  const fetchPostDetail = useCallback(async () => {
     try {
-      const response = await axios.get(`/api/posts/${memoryId}`);
-      setMemoryDetail(response.data);
+      const response = await axios.get(`/api/posts/${postId}`); // postId로 API 호출
+      setPostDetail(response.data); // 응답 데이터를 상태에 저장
     } catch (error) {
       console.error("게시글을 불러오는 중 오류 발생:", error);
     }
-  }, [memoryId]);
+  }, [postId]);
 
-  // 댓글 목록 API 호출
+  // 댓글 가져오기
   const fetchComments = useCallback(async () => {
     try {
-      const response = await axios.get(`/api/posts/${memoryId}/comments`, {
-        params: { page, pageSize: 5 }, // 페이지당 아이템 수를 5로 설정
+      const response = await axios.get(`/api/posts/${postId}/comments`, {
+        params: { page, pageSize: 5 }, // 페이지 및 페이지당 댓글 수 설정
       });
-      setComments(response.data.data);
-      setTotalPages(response.data.totalPages);
+      setComments(response.data.data); // 댓글 데이터 상태에 저장
+      setTotalPages(response.data.totalPages); // 전체 페이지 수 저장
     } catch (error) {
       console.error("댓글을 불러오는 중 오류 발생:", error);
     }
-  }, [memoryId, page]);
+  }, [postId, page]);
 
+  // 컴포넌트 마운트 시 데이터 가져오기
   useEffect(() => {
-    fetchMemoryDetail();
-    fetchComments();
-  }, [fetchMemoryDetail, fetchComments]);
+    fetchPostDetail(); // 게시물 상세 정보 가져오기
+    fetchComments(); // 댓글 정보 가져오기
+  }, [fetchPostDetail, fetchComments]);
 
-  // 공감 보내기 기능
+  // 공감(좋아요) 기능
   const handleLikeButtonClick = async () => {
     try {
-      await axios.post(`/api/posts/${memoryId}/like`);
-      fetchMemoryDetail(); // 공감 수 갱신
+      await axios.post(`/api/posts/${postId}/like`); // 공감 API 호출
+      fetchPostDetail(); // 공감 후 상세 정보 다시 불러오기 (공감 수 업데이트)
     } catch (error) {
       console.error("공감 보내기 실패:", error);
     }
   };
 
+  // 모달 열기/닫기 핸들러
   const handleEditButtonClick = () => {
     setIsEditModalOpen(true);
   };
@@ -90,17 +92,19 @@ const MemoryDetailPage = () => {
     setIsCommentDeleteModalOpen(false);
   };
 
+  // 게시물 정보가 아직 로드되지 않은 경우
   if (!memoryDetail) {
     return <div>게시글을 불러오는 중입니다...</div>;
   }
 
+  // 실제 댓글 수 계산
   const actualCommentCount = comments.length;
 
   return (
     <div className="memory-detail-page">
       <Header />
       <div className="memory-card-detail">
-        {/* 게시글 상세 내용 */}
+        {/* 게시물 상세 정보 렌더링 */}
         <div className="memory-header">
           <div className="memory-header-left">
             <p className="nickname">{memoryDetail.nickname}</p>
@@ -200,8 +204,12 @@ const MemoryDetailPage = () => {
         </div>
       </div>
 
-      {/* Modals */}
-      <MemoryEditModal isOpen={isEditModalOpen} onClose={handleCloseModal} />
+      {/* 모달들 */}
+      <MemoryEditModal
+        isOpen={isEditModalOpen}
+        onClose={handleCloseModal}
+        memoryDetails={memoryDetail}
+      />
       <MemoryDeleteModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseModal}

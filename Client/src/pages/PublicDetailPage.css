@@ -127,6 +127,7 @@
   font-size: 0.9em;
   cursor: pointer;
   text-decoration: none;
+  white-space: nowrap; /* 한 줄로 표시 */
 }
 
 .action-buttons button:hover {

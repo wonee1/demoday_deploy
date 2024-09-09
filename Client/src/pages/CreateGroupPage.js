@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./CreateGroupPage.css"; // 페이지 스타일
 import Header from "../components/Header";
 import SuccessModal from "../components/SuccessModal"; // 성공 모달 컴포넌트
@@ -14,6 +15,7 @@ function CreateGroupPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showErrorModal, setShowErrorModal] = useState(false);
 
+  const navigate = useNavigate();
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     const maxSize = 5 * 1024 * 1024; // 5MB 제한
@@ -78,6 +80,7 @@ function CreateGroupPage() {
       if (response.status === 201) {
         setShowSuccessModal(true);
         console.log("그룹 생성 성공");
+        navigate("/");
       } else {
         setShowErrorModal(true);
         console.error("그룹 생성 실패:", response);

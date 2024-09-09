@@ -28,6 +28,9 @@
   height: 20px;
   cursor: pointer;
 }
+.modal-close-button:hover {
+  background-color: #fff;
+}
 .modal-content h2 {
   margin-top: 0;
   font-size: 1.5em;
@@ -51,8 +54,11 @@
   margin-top: 15px;
   background-color: #000;
   color: #fff;
-  padding: 10px 120px;
+  padding: 10px 40px; /* 패딩을 줄임 */
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  white-space: nowrap; /* 텍스트를 한 줄로 유지 */
+  display: inline-block; /* 필요 시 inline-block으로 설정 */
+  font-size: 16px; /* 글씨 크기 조정 */
 }

@@ -46,6 +46,7 @@ const PrivateGroupList = ({ sortKey, keyword }) => {
             key={group.id}
             group={group}
             showBadges={false}
+            showImage={false}
             onClick={() => navigate(`/groups/private/${group.id}`)}
           />
         ))}

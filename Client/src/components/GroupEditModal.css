@@ -15,21 +15,22 @@
 .groupedit-modal-content {
   position: relative;
   background: white;
-  padding: 40px 20px;
-  border-radius: 0px;
-  width: 100%;
-  max-width: 400px;
-  font-family: "Noto Sans KR", sans-serif; /* 전체 폰트 설정 */
+  padding: 20px 15px; /* 여백을 줄여줍니다 */
+  border-radius: 8px; /* 약간의 모서리 둥글기를 추가 */
+  width: 60%; /* 너비를 60%로 조정 */
+  max-width: 350px; /* 최대 너비를 350px로 설정 */
+  font-family: "Noto Sans KR", sans-serif;
 }
 
 .groupedit-modal-close {
-  background: none;
-  border: none;
-  font-size: 1.5em;
-  cursor: pointer;
   position: absolute;
-  top: 20px; /* 모달 창 오른쪽 위에 위치하도록 조정 */
-  right: 20px; /* 모달 창 오른쪽 위에 위치하도록 조정 */
+  top: 0px;
+  right: 10px;
+  width: 20px;
+  background-color: transparent;
+  height: 20px;
+  cursor: pointer;
+  color: #000;
 }
 
 .edit-form-group {
@@ -164,7 +165,7 @@ textarea::placeholder {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: #ccc; /* 꺼진 상태의 배경색 */
   transition: 0.4s;
   border-radius: 34px;
 }
@@ -176,17 +177,17 @@ textarea::placeholder {
   width: 12px;
   left: 4px;
   bottom: 4px;
-  background-color: white;
+  background-color: white; /* 슬라이더의 색상 */
   transition: 0.4s;
   border-radius: 50%;
 }
 
 input:checked + .groupedit-slider {
-  background-color: #282828;
+  background-color: #282828; /* 켜진 상태의 배경색 */
 }
 
 input:checked + .groupedit-slider:before {
-  transform: translateX(14px);
+  transform: translateX(14px); /* 슬라이더 이동 */
 }
 
 /* 스위치 라벨 */
@@ -209,6 +210,6 @@ input:checked + .groupedit-slider:before {
   font-family: "Noto Sans KR", sans-serif; /* 폰트 설정 */
 }
 
-.groupedit-create-button {
+.groupedit-create-button:hover {
   background-color: #555;
 }

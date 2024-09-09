@@ -69,3 +69,13 @@ h2 {
 .delete-button:hover {
   background-color: #333;
 }
+.memorydelete-close-button {
+  position: absolute;
+  top: 0px;
+  right: 10px;
+  width: 20px;
+  background-color: transparent;
+  height: 20px;
+  cursor: pointer;
+  color: #282828;
+}
