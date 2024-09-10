@@ -33,7 +33,7 @@
 }
 
 .memory-header-left {
-  flex-grow: 1;
+  /* flex-grow: 1; */
   display: flex;
   align-items: center;
 }
@@ -48,8 +48,9 @@
 .memory-header .nickname {
   font-size: 18px;
   color: #333;
-  margin-bottom: 0;
-  margin-top: 100px;
+  margin: 0; /* 불필요한 여백 제거 */
+  padding: 0; /* 불필요한 패딩 제거 */
+  line-height: 1.2; /* 줄 간격 조절 */
 }
 
 .memory-header .pipe {
@@ -59,6 +60,7 @@
 
 .memory-header .public-status {
   color: #b8b8b8;
+  line-height: 1.2;
 }
 
 .memory-header h1 {
@@ -128,7 +130,7 @@
 }
 
 .memory-detail-page img {
-  width: 500px; /* Adjusted width */
+  width: 300px; /* Adjusted width */
   height: auto; /* Maintain aspect ratio */
   margin-top: 20px;
   margin-bottom: 20px;
@@ -139,7 +141,7 @@
 }
 
 .memory-info {
-  max-width: 500px;
+  max-width: 300px;
   margin: 20px auto;
   text-align: left;
   font-size: 18px;
@@ -225,7 +227,7 @@
   width: 400px;
   margin: 100px auto;
   margin-top: 120px;
-  padding: 15px 30px;
+  padding: 10px 20px;
   background-color: #333;
   color: #fff;
   border: none;
@@ -258,4 +260,49 @@
   font-size: 14px;
   color: #b7b7b7; /* 더 연한 색상으로 설정 */
   margin-top: 30px;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.pagination button {
+  border: 1px solid #282828;
+  background-color: #fff;
+  width: 40px; /* 버튼의 너비 */
+  height: 40px; /* 버튼의 높이 (너비와 동일하게 설정하여 정사각형으로) */
+  margin: 0 5px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #282828;
+  transition: background-color 0.3s, color 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pagination button:hover {
+  background-color: #f0f0f0;
+}
+
+.pagination button.active {
+  background-color: #282828;
+  color: #fff;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination button.arrow {
+  width: 40px; /* 좌우 화살표 버튼도 동일한 크기로 설정 */
+  height: 40px;
+}
+
+.pagination button.arrow.disabled {
+  opacity: 0.3;
+  cursor: default;
 }

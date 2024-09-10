@@ -84,6 +84,7 @@
 .edit-form-group input[type="password"],
 .edit-form-group textarea {
   width: 100%;
+  color: #282828;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -95,9 +96,11 @@
   font-family: "Noto Sans KR", sans-serif; /* 폰트 설정 */
 }
 
-textarea::placeholder {
+.edit-form-group input[type="text"]::placeholder,
+.edit-form-group input[type="password"]::placeholder,
+.edit-form-group textarea::placeholder {
   color: #888; /* placeholder 텍스트의 색상을 회색으로 설정 */
-  font-size: 0.9em; /* placeholder 텍스트의 크기를 조정 */
+  font-size: 0.9em;
   font-family: "Noto Sans KR", sans-serif; /* 폰트 설정 */
 }
 

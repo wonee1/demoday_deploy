@@ -10,6 +10,7 @@
   align-items: flex-start;
   margin-bottom: 20px;
   margin-top: 30px;
+  position: relative; /* 추가 */
 }
 
 .group-header img {
@@ -88,7 +89,9 @@
 }
 
 .like-button-container {
-  text-align: right;
+  position: absolute;
+  right: 0;
+  top: 200px;
 }
 
 .like-button {
@@ -102,6 +105,7 @@
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
   color: #282828;
+  text-align: right;
 }
 
 .flower-icon {

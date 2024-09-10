@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom"; // useParams 훅으로 URL에서 groupId를 가져옴
+import { useParams, useNavigate } from "react-router-dom"; // useParams 훅으로 URL에서 groupId를 가져옴
 import axios from "axios";
 import "./PublicDetailPage.css";
 import Header from "../components/Header";
@@ -9,6 +9,9 @@ import GroupDeleteModal from "../components/GroupDeleteModal";
 import MemoryNav from "../components/MemoryNav";
 import img2 from "../assets/image=img2.svg";
 import LikeIcon from "../assets/icon=flower.svg";
+import badge1 from "../assets/badge1.png"; // 7일 연속 추억 등록 배지 이미지
+import badge2 from "../assets/badge2.png"; // 추억 수 20개 이상 등록 배지 이미지
+import badge3 from "../assets/badge3.png"; // 그룹 공감 1만 개 이상 받기 배지 이미지
 
 const PublicDetailPage = () => {
   const { groupId } = useParams(); // URL에서 그룹 ID 가져옴
@@ -20,6 +23,14 @@ const PublicDetailPage = () => {
   const [sortBy, setSortBy] = useState("latest");
   const [page, setPage] = useState(1);
   const [pageSize] = useState(10);
+  const [badges, setBadges] = useState([]);
+  const [keyword, setKeyword] = useState(""); // 검색어 상태 추가
+  const navigate = useNavigate(); // 페이지 리다이렉트를 위한 useNavigate 훅
+  // 검색어 입력 시 호출되는 함수
+  const handleSearch = (searchTerm) => {
+    setKeyword(searchTerm); // 검색어 상태 업데이트
+    setPage(1); // 검색 시 페이지를 1로 리셋
+  };
 
   // groupId가 바뀔 때마다 groupDetail과 posts를 새로 fetch
   useEffect(() => {
@@ -36,6 +47,27 @@ const PublicDetailPage = () => {
       if (response.status === 200) {
         setGroupDetail(response.data);
         console.log("Fetched group details:", response.data); // API 응답 로그
+        const newBadges = [];
+        // 배지 조건 체크
+        if (response.data.postCount >= 20) {
+          newBadges.push({ label: "추억 20개 이상 등록", image: badge2 });
+        }
+
+        if (response.data.likeCount >= 10000) {
+          newBadges.push({
+            label: "그룹 공감 1만 개 이상 받기",
+            image: badge3,
+          });
+        }
+
+        if (response.data.hasMemoryWithLikes >= 10000) {
+          newBadges.push({
+            label: "추억 공감 1만 개 이상 받기",
+            image: badge1,
+          });
+        }
+
+        setBadges(newBadges); // 배지 상태 업데이트
       }
     } catch (error) {
       console.error("그룹 상세 정보 조회 중 오류 발생:", error);
@@ -52,6 +84,7 @@ const PublicDetailPage = () => {
           pageSize,
           sortBy,
           isPublic,
+          keyword,
         },
       });
       if (response.status === 200) {
@@ -76,7 +109,10 @@ const PublicDetailPage = () => {
       alert("공감 보내기 중 오류가 발생했습니다.");
     }
   };
-
+  const handleDeleteGroup = () => {
+    handleCloseModal(); // 삭제 후 모달 닫기
+    navigate("/groups"); // 삭제 후 그룹 목록으로 이동
+  };
   const handleGroupEditButtonClick = () => {
     setIsGroupEditModalOpen(true);
   };
@@ -89,7 +125,12 @@ const PublicDetailPage = () => {
     setIsGroupEditModalOpen(false);
     setIsGroupDeleteModalOpen(false);
   };
-
+  // 그룹 정보 수정 후 처리할 함수
+  const handleEditGroupSubmit = (updatedDetails) => {
+    setGroupDetail(updatedDetails); // 수정된 정보로 상태 업데이트
+    alert("그룹 정보가 성공적으로 수정되었습니다.");
+    handleCloseModal(); // 모달 닫기
+  };
   if (!groupDetail) return <div>Loading...</div>;
 
   return (
@@ -118,16 +159,19 @@ const PublicDetailPage = () => {
               </button>
             </div>
           </div>
-          <h1 className="group-title">{groupDetail.name}</h1>
-          <div className="group-stats">
-            <span>추억: {groupDetail.postCount}</span>
-            <span> | 그룹 공감: {groupDetail.likeCount}</span>
+          <div class="group-title-stats">
+            <h1 className="group-title">{groupDetail.name}</h1>
+            <div className="group-stats">
+              <span>추억: {groupDetail.postCount}</span>
+              <span> | 그룹 공감: {groupDetail.likeCount}</span>
+            </div>
           </div>
           <p className="group-description">{groupDetail.introduction}</p>
           <div className="badges-container">
-            {groupDetail.badges.map((badge, index) => (
+            {badges.map((badge, index) => (
               <span key={index} className="badge">
-                {badge}
+                <img src={badge.image} alt={badge.label} />
+                {badge.label}
               </span>
             ))}
             <div className="like-button-container">
@@ -139,26 +183,31 @@ const PublicDetailPage = () => {
           </div>
         </div>
       </div>
+
       <MemoryNav
         groupId={groupId}
         onToggleView={setIsPublic}
         onSortChange={setSortBy}
+        onSearch={handleSearch}
       />
       <PublicMemory
         groupId={groupId}
         isPublic={isPublic}
         sortBy={sortBy}
+        keyword={keyword}
         posts={posts} // Changed from memories to posts
       />
       <GroupEditModal
         isOpen={isGroupEditModalOpen}
         onClose={handleCloseModal}
         groupDetails={groupDetail}
+        onSubmit={handleEditGroupSubmit}
       />
       <GroupDeleteModal
         isOpen={isGroupDeleteModalOpen}
         onClose={handleCloseModal}
         groupId={groupId}
+        onDelete={handleDeleteGroup}
       />
     </div>
   );

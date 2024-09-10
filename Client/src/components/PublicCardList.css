@@ -46,3 +46,17 @@
   margin-top: 100px;
   margin-bottom: 100px; /* This might be redundant but ensures spacing */
 }
+.empty-state-message {
+  font-size: 18px;
+  color: #8c8c8c; /* 텍스트 색상 설정 */
+  margin-top: 20px;
+  text-align: center; /* 텍스트 중앙 정렬 */
+  font-weight: bold; /* 텍스트 굵기 설정 */
+}
+
+.empty-state-submessage {
+  font-size: 14px;
+  color: #b7b7b7; /* 더 연한 텍스트 색상 설정 */
+  margin-top: 10px;
+  text-align: center; /* 텍스트 중앙 정렬 */
+}

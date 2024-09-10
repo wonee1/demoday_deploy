@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import "./PublicCardList.css";
 import PublicCard from "./PublicCard";
 import { fetchGroups } from "../api"; // API 호출 함수 임포트
@@ -12,37 +12,55 @@ const PublicCardList = ({ sortKey, keyword }) => {
   const [page, setPage] = useState(1);
 
   // 그룹 목록 불러오는 함수
-  const loadGroups = async (reset = false) => {
-    setLoading(true);
-    try {
-      console.log("Fetching groups with sortKey:", sortKey); // 디버깅용 로그 추가
-      const response = await fetchGroups({
-        isPublic: true,
-        sortBy: sortKey, // 선택한 정렬 기준을 API 요청에 포함
-        keyword,
-        page: reset ? 1 : page,
-        pageSize: 10,
-      });
-      if (reset) {
-        setGroups(response.data); // 새 정렬 기준일 경우 목록을 초기화
-      } else {
-        setGroups((prevGroups) => [...prevGroups, ...response.data]);
+  const loadGroups = useCallback(
+    async (reset = false) => {
+      setLoading(true);
+      try {
+        const response = await fetchGroups({
+          isPublic: true,
+          keyword,
+          page: reset ? 1 : page,
+          pageSize: 10,
+        });
+
+        let fetchedGroups = response.data;
+
+        const sortedGroups = [...fetchedGroups].sort((a, b) => {
+          if (sortKey === "likes") {
+            return b.likeCount - a.likeCount;
+          } else if (sortKey === "recent") {
+            return new Date(b.createdAt) - new Date(a.createdAt);
+          } else if (sortKey === "post") {
+            return b.postCount - a.postCount;
+          } else if (sortKey === "badge") {
+            return b.badgeCount - a.badgeCount;
+          }
+          return 0;
+        });
+
+        if (reset) {
+          setGroups(sortedGroups);
+        } else {
+          setGroups((prevGroups) => [...prevGroups, ...sortedGroups]);
+        }
+
+        setHasMore(response.currentPage < response.totalPages);
+      } catch (error) {
+        console.error("Failed to load groups:", error);
+      } finally {
+        setLoading(false);
       }
-      setHasMore(response.currentPage < response.totalPages);
-    } catch (error) {
-      console.error("Failed to load groups:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    },
+    [keyword, page, sortKey]
+  ); // 의존성 추가
 
   useEffect(() => {
     loadGroups(true); // sortKey나 keyword가 변경되면 목록을 초기화
-  }, [sortKey, keyword]);
+  }, [sortKey, keyword, loadGroups]);
 
   useEffect(() => {
     if (page > 1) loadGroups(); // 페이지 변경 시 추가로 그룹 불러오기
-  }, [page]);
+  }, [page, loadGroups]);
 
   const loadMore = () => {
     if (hasMore && !loading) {

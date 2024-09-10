@@ -9,17 +9,27 @@ const CommentEditModal = ({ isOpen, onClose, onSubmit, commentId }) => {
 
   useEffect(() => {
     if (commentId) {
-      // commentId로 서버에서 댓글 정보를 불러와서 필드 설정하는 예시
+      console.log("Fetching comment with ID:", commentId); // commentId 확인용 로그
+
       const fetchComment = async () => {
         try {
           const response = await fetch(`/api/comments/${commentId}`);
-          const data = await response.json();
-          setNickname(data.nickname || "");
-          setComment(data.content || "");
+          const contentType = response.headers.get("Content-Type");
+
+          // 응답이 JSON 형식인지 확인
+          if (contentType && contentType.includes("application/json")) {
+            const data = await response.json();
+            setNickname(data.nickname || "");
+            setComment(data.content || "");
+          } else {
+            throw new Error("Received non-JSON response");
+          }
         } catch (error) {
+          console.error("Error fetching comment:", error);
           setErrorMessage("댓글을 불러오는 중 오류가 발생했습니다.");
         }
       };
+
       fetchComment();
     }
   }, [commentId]);

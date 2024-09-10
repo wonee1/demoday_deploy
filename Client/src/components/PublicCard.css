@@ -36,23 +36,28 @@
 .card-info {
   display: flex;
   align-items: center;
-  font-size: 0.9em;
+  font-size: 1em; /* 텍스트가 더 명확히 보이도록 크기 조정 */
   margin-bottom: 10px;
 }
 
 .card-info span:first-child {
   color: #282828;
+  font-weight: bold; /* 텍스트가 더 잘 보이도록 굵게 설정 */
+  display: inline-block; /* 텍스트가 잘리지 않도록 설정 */
 }
 
 .card-info span:last-child {
   color: #8d8d8d;
   margin-left: 5px;
+  display: inline-block; /* 텍스트가 잘리지 않도록 설정 */
+  white-space: nowrap; /* D+ 뒤의 숫자가 줄바꿈되지 않도록 설정 */
 }
 
 .card-title {
   margin: 10px 0;
   font-size: 1.2em;
   color: #282828;
+  text-align: left;
 }
 
 .card-description {

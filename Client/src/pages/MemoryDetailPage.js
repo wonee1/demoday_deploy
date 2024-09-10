@@ -15,8 +15,9 @@ import DeleteIcon from "../assets/icon=delete.svg";
 
 const MemoryDetailPage = () => {
   const { postId } = useParams(); // postId 경로 파라미터 받기
-  const [memoryDetail, setPostDetail] = useState(null); // 게시물 상세 정보 상태
+  const [memoryDetail, setMemoryDetail] = useState(null); // 게시물 상세 정보 상태
   const [comments, setComments] = useState([]); // 댓글 상태
+  const [totalComments, setTotalComments] = useState(0); // 전체 댓글 개수
   const [isEditModalOpen, setIsEditModalOpen] = useState(false); // 수정 모달 상태
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // 삭제 모달 상태
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false); // 댓글 작성 모달 상태
@@ -25,13 +26,14 @@ const MemoryDetailPage = () => {
     useState(false); // 댓글 삭제 모달 상태
   const [currentComment, setCurrentComment] = useState(null); // 현재 수정/삭제할 댓글 상태
   const [page, setPage] = useState(1); // 현재 페이지 상태
-  const [totalPages, setTotalPages] = useState(1); // 전체 페이지 수 상태
+  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 3; // 한 페이지에 보여줄 댓글 개수
 
   // 게시물 상세 정보 가져오기
-  const fetchPostDetail = useCallback(async () => {
+  const fetchMemoryDetail = useCallback(async () => {
     try {
       const response = await axios.get(`/api/posts/${postId}`); // postId로 API 호출
-      setPostDetail(response.data); // 응답 데이터를 상태에 저장
+      setMemoryDetail(response.data); // 응답 데이터를 상태에 저장
     } catch (error) {
       console.error("게시글을 불러오는 중 오류 발생:", error);
     }
@@ -41,10 +43,11 @@ const MemoryDetailPage = () => {
   const fetchComments = useCallback(async () => {
     try {
       const response = await axios.get(`/api/posts/${postId}/comments`, {
-        params: { page, pageSize: 5 }, // 페이지 및 페이지당 댓글 수 설정
+        params: { page, pageSize }, // 한 페이지에 3개의 댓글씩 가져옴
       });
-      setComments(response.data.data); // 댓글 데이터 상태에 저장
-      setTotalPages(response.data.totalPages); // 전체 페이지 수 저장
+      setComments(response.data.data);
+      setTotalPages(response.data.totalPages);
+      setTotalComments(response.data.totalItemCount);
     } catch (error) {
       console.error("댓글을 불러오는 중 오류 발생:", error);
     }
@@ -52,18 +55,52 @@ const MemoryDetailPage = () => {
 
   // 컴포넌트 마운트 시 데이터 가져오기
   useEffect(() => {
-    fetchPostDetail(); // 게시물 상세 정보 가져오기
+    fetchMemoryDetail(); // 게시물 상세 정보 가져오기
     fetchComments(); // 댓글 정보 가져오기
-  }, [fetchPostDetail, fetchComments]);
+  }, [fetchMemoryDetail, fetchComments]);
 
   // 공감(좋아요) 기능
   const handleLikeButtonClick = async () => {
     try {
       await axios.post(`/api/posts/${postId}/like`); // 공감 API 호출
-      fetchPostDetail(); // 공감 후 상세 정보 다시 불러오기 (공감 수 업데이트)
+      fetchMemoryDetail(); // 공감 후 상세 정보 다시 불러오기 (공감 수 업데이트)
     } catch (error) {
       console.error("공감 보내기 실패:", error);
     }
+  };
+
+  // 댓글 수정 처리 함수
+  const handleCommentEdit = (updatedComment) => {
+    setComments((prevComments) =>
+      prevComments.map((comment) =>
+        comment.id === updatedComment.id ? updatedComment : comment
+      )
+    );
+    setIsCommentEditModalOpen(false); // 수정 모달 닫기
+  };
+
+  // 댓글 등록 처리 함수
+  const handleCommentSubmit = (newComment) => {
+    const updatedComments = [newComment, ...comments]; // 새로운 댓글 추가
+    setComments(updatedComments); // 전체 댓글 목록을 업데이트
+    setTotalComments(totalComments + 1); // 전체 댓글 수 증가
+    setTotalPages(Math.ceil((totalComments + 1) / pageSize)); // 페이지 수 재계산
+    setPage(1); // 첫 페이지로 이동
+    setIsCommentModalOpen(false); // 모달 닫기
+  };
+
+  // 댓글 삭제 처리 함수
+  const handleCommentDelete = (commentId) => {
+    const updatedComments = comments.filter(
+      (comment) => comment.id !== commentId
+    );
+    setComments(updatedComments.slice(0, pageSize)); // 현재 페이지의 댓글 목록 업데이트
+    setTotalComments(totalComments - 1); // 전체 댓글 수 감소
+    setTotalPages(Math.ceil((totalComments - 1) / pageSize)); // 페이지 수 재계산
+    if (updatedComments.length === 0 && page > 1) {
+      setPage(page - 1); // 페이지가 비었을 경우 이전 페이지로 이동
+    }
+    setIsCommentDeleteModalOpen(false); // 모달 닫기
   };
 
   // 모달 열기/닫기 핸들러
@@ -91,14 +128,15 @@ const MemoryDetailPage = () => {
     setIsCommentEditModalOpen(false);
     setIsCommentDeleteModalOpen(false);
   };
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    fetchComments(); // 새로운 페이지에 대한 댓글 데이터를 가져옵니다.
+  };
 
   // 게시물 정보가 아직 로드되지 않은 경우
   if (!memoryDetail) {
     return <div>게시글을 불러오는 중입니다...</div>;
   }
-
-  // 실제 댓글 수 계산
-  const actualCommentCount = comments.length;
 
   return (
     <div className="memory-detail-page">
@@ -127,7 +165,8 @@ const MemoryDetailPage = () => {
         <div className="memory-meta">
           <div className="memory-meta-left">
             <p className="moment">
-              {memoryDetail.location} · {memoryDetail.moment}
+              {memoryDetail.location} ·{" "}
+              {new Date(memoryDetail.moment).toISOString().split("T")[0]}
             </p>
             <div className="memory-icons">
               <span>
@@ -136,7 +175,7 @@ const MemoryDetailPage = () => {
               </span>
               <span>
                 <img src={CommentIcon} alt="Comment" />
-                {actualCommentCount}
+                {totalComments} {/* 전체 댓글 개수 표시 */}
               </span>
             </div>
           </div>
@@ -159,7 +198,8 @@ const MemoryDetailPage = () => {
 
       {/* 댓글 목록 */}
       <div className="comments-section">
-        <h2>댓글 {actualCommentCount}</h2>
+        <h2>댓글 {totalComments}</h2>{" "}
+        {/* 전체 댓글 개수를 페이지 상관없이 표시 */}
         <div className="memory-divider2"></div>
         {comments.length > 0 ? (
           comments.map((comment, index) => (
@@ -193,14 +233,31 @@ const MemoryDetailPage = () => {
             <p className="secondary-message">가장 먼저 댓글을 등록해 보세요!</p>
           </div>
         )}
-
         {/* 페이지네이션 */}
         <div className="pagination">
+          <button
+            className="arrow"
+            onClick={() => setPage(page - 1)}
+            disabled={page === 1}
+          >
+            &lt;
+          </button>
           {Array.from({ length: totalPages }, (_, index) => (
-            <button key={index + 1} onClick={() => setPage(index + 1)}>
+            <button
+              key={index + 1}
+              onClick={() => handlePageChange(index + 1)}
+              className={page === index + 1 ? "active" : ""}
+            >
               {index + 1}
             </button>
           ))}
+          <button
+            className="arrow"
+            onClick={() => setPage(page + 1)}
+            disabled={page === totalPages}
+          >
+            &gt;
+          </button>
         </div>
       </div>
 
@@ -208,289 +265,34 @@ const MemoryDetailPage = () => {
       <MemoryEditModal
         isOpen={isEditModalOpen}
         onClose={handleCloseModal}
+        postId={postId} // postId를 CommentModal에 전달
         memoryDetails={memoryDetail}
       />
       <MemoryDeleteModal
         isOpen={isDeleteModalOpen}
         onClose={handleCloseModal}
+        postId={postId} // postId를 CommentModal에 전달
       />
-      <CommentModal isOpen={isCommentModalOpen} onClose={handleCloseModal} />
+      <CommentModal
+        isOpen={isCommentModalOpen}
+        onClose={handleCloseModal}
+        postId={postId} // postId를 CommentModal에 전달
+        onSubmit={handleCommentSubmit}
+      />
       <CommentEditModal
         isOpen={isCommentEditModalOpen}
         onClose={handleCloseModal}
-        commentData={currentComment}
+        commentId={currentComment?.id} // 선택된 댓글의 ID를 전달
+        onSubmit={handleCommentEdit} // 수정 후 처리할 함수
       />
       <CommentDeleteModal
         isOpen={isCommentDeleteModalOpen}
+        commentId={currentComment?.id} // 선택된 댓글의 ID를 전달
         onClose={handleCloseModal}
+        onDelete={handleCommentDelete}
       />
     </div>
   );
 };
 
 export default MemoryDetailPage;
-
-// import React, { useState } from "react";
-// import { useParams } from "react-router-dom";
-// import Header from "../components/Header";
-// import "./MemoryDetailPage.css";
-// import LikeIcon from "../assets/icon=flower.svg";
-// import CommentIcon from "../assets/icon=comment.svg";
-// import MemoryImg from "../assets/publicmemory.svg"; // Import the image
-// import MemoryEditModal from "../components/MemoryEditModal";
-// import MemoryDeleteModal from "../components/MemoryDeleteModal";
-// import EditIcon from "../assets/icon=edit.svg";
-// import DeleteIcon from "../assets/icon=delete.svg";
-// import CommentModal from "../components/CommentModal";
-// import CommentEditModal from "../components/CommentEditModal";
-// import CommentDeleteModal from "../components/CommentDeleteModal";
-// // Dummy data (same as in MemoryList)
-// const dummyMemories = [
-//   {
-//     id: 1,
-//     nickname: "달봉이아빠",
-//     title: "에델바이스 꽃만이 소중한 추억이래요",
-//     imageUrl: MemoryImg,
-//     tags: ["#추억", "#가족"],
-//     location: "서울숲",
-//     moment: "2024-02-21",
-//     isPublic: true,
-//     likeCount: 120,
-//     commentCount: 8,
-//     createdAt: "2024-02-22",
-//     content:
-//       "인천 앞바다에서 월척을 낚았어요! 가족들과 함께 좋은 시간을 보냈습니다.<br />" +
-//       "인천 앞바다에서 월척을 낚았어요! 가족들과 함께 좋은 시간을 보냈습니다.<br />" +
-//       "인천 앞바다에서 월척을 낚았어요! 가족들과 함께 좋은 시간을 보냈습니다.<br />" +
-//       "인천 앞바다에서 월척을 낚았어요! 가족들과 함께 좋은 시간을 보냈습니다.",
-//     comments: [
-//       { nickname: "사용자1", date: "2024-02-22", content: "멋진 추억이네요!" },
-//       { nickname: "사용자2", date: "2024-02-23", content: "좋아요!" },
-//     ],
-//   },
-//   {
-//     id: 2,
-//     nickname: "달봉이엄마",
-//     title: "서울숲 소풍",
-//     imageUrl: MemoryImg,
-//     tags: ["#소풍", "#서울숲"],
-//     location: "서울숲",
-//     moment: "2024-02-21",
-//     isPublic: true,
-//     likeCount: 110,
-//     commentCount: 5,
-//     createdAt: "2024-02-20",
-//     content:
-//       "서울숲에서 소풍을 즐겼어요! 가족들과 함께 행복한 시간을 보냈습니다.",
-//     comments: [
-//       {
-//         nickname: "사용자3",
-//         date: "2024-02-20",
-//         content: "좋은 시간 보내셨네요!",
-//       },
-//       {
-//         nickname: "사용자4",
-//         date: "2024-02-21",
-//         content: "추억 공유해주셔서 감사합니다.",
-//       },
-//     ],
-//   },
-// ];
-
-// const MemoryDetailPage = () => {
-//   const { memoryId } = useParams();
-//   const memoryDetail = dummyMemories.find(
-//     (memory) => memory.id === parseInt(memoryId)
-//   );
-
-//   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-//   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-//   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-//   const [isCommentEditModalOpen, setIsCommentEditModalOpen] = useState(false);
-//   const [isCommentDeleteModalOpen, setIsCommentDeleteModalOpen] =
-//     useState(false);
-//   const [currentComment, setCurrentComment] = useState(null);
-//   const handleEditButtonClick = () => {
-//     setIsEditModalOpen(true);
-//   };
-//   const handleDeleteButtonClick = () => {
-//     setIsDeleteModalOpen(true); // Open delete modal
-//   };
-//   const handleCommentButtonClick = () => {
-//     setIsCommentModalOpen(true); // Open the comment modal
-//   };
-//   const handleCommentEditButtonClick = (comment) => {
-//     setCurrentComment(comment);
-//     setIsCommentEditModalOpen(true); // Open the comment edit modal
-//   };
-//   const handleCommentDeleteButtonClick = () => {
-//     setIsCommentDeleteModalOpen(true); // 댓글 삭제 모달 열기
-//   };
-//   const handleCloseModal = () => {
-//     setIsEditModalOpen(false);
-//     setIsDeleteModalOpen(false);
-//     setIsCommentModalOpen(false);
-//     setIsCommentEditModalOpen(false);
-//     setIsCommentDeleteModalOpen(false);
-//   };
-
-//   const handleFormSubmit = (formData) => {
-//     console.log("Form submitted with:", formData);
-//     // Handle the form submission logic, e.g., updating the memory details
-//     setIsEditModalOpen(false);
-//   };
-
-//   const handlePostDeletion = () => {
-//     console.log("Post deleted successfully");
-//     // Implement any additional logic after deletion, e.g., redirecting
-//     handleCloseModal();
-//   };
-//   const handleCommentSubmit = (commentData) => {
-//     console.log("Comment submitted with:", commentData);
-//     setIsCommentModalOpen(false);
-//     // Handle comment submission logic
-//   };
-//   const handleCommentUpdate = (updatedCommentData) => {
-//     console.log("Comment updated with:", updatedCommentData);
-//     setIsCommentEditModalOpen(false);
-//     // Handle comment update logic
-//   };
-//   const handleCommentDelete = (password) => {
-//     console.log("Comment deleted with password:", password);
-//     setIsCommentDeleteModalOpen(false);
-//   };
-//   if (!memoryDetail) {
-//     return <div>Memory not found</div>;
-//   }
-
-//   const actualCommentCount = memoryDetail.comments
-//     ? memoryDetail.comments.length
-//     : 0;
-
-//   return (
-//     <div className="memory-detail-page">
-//       <Header />
-//       <div className="memory-card-detail">
-//         <div className="memory-header">
-//           <div className="memory-header-left">
-//             <p className="nickname">
-//               {memoryDetail.nickname} <span className="pipe">|</span>{" "}
-//               <span className="public-status">
-//                 {memoryDetail.isPublic ? "공개" : "비공개"}
-//               </span>
-//             </p>
-//           </div>
-//           <div className="memory-header-right actions">
-//             <span className="edit-link" onClick={handleEditButtonClick}>
-//               추억 수정하기
-//             </span>
-//             <span className="delete-link" onClick={handleDeleteButtonClick}>
-//               추억 삭제하기
-//             </span>
-//           </div>
-//         </div>
-//         <h1>{memoryDetail.title}</h1>
-//         <div className="tags">{memoryDetail.tags.join(" ")}</div>
-//         <div className="memory-meta">
-//           <div className="memory-meta-left">
-//             <p className="moment">
-//               {memoryDetail.location} · {memoryDetail.moment}
-//             </p>
-//             <div className="memory-icons">
-//               <span>
-//                 <img src={LikeIcon} alt="Like" />
-//                 {memoryDetail.likeCount}
-//               </span>
-//               <span>
-//                 <img src={CommentIcon} alt="Comment" />
-//                 {actualCommentCount}
-//               </span>
-//             </div>
-//           </div>
-//           <div className="memory-meta-right">
-//             <button className="like-button">
-//               <img src={LikeIcon} alt="flower icon" className="flower-icon" />
-//               공감 보내기
-//             </button>
-//           </div>
-//         </div>
-//         <div className="memory-divider"></div> {/* 구분선 추가 */}
-//         <img src={memoryDetail.imageUrl} alt={memoryDetail.title} />
-//         <div className="memory-info">
-//           <p dangerouslySetInnerHTML={{ __html: memoryDetail.content }} />
-//         </div>
-//         <button className="comment-button" onClick={handleCommentButtonClick}>
-//           댓글 등록하기
-//         </button>{" "}
-//         {/* 댓글 등록하기 버튼 */}
-//       </div>
-
-//       <div className="comments-section">
-//         <h2>댓글 {actualCommentCount}</h2>
-//         <div className="memory-divider2"></div>
-//         {memoryDetail.comments && memoryDetail.comments.length > 0 ? (
-//           memoryDetail.comments.map((comment, index) => (
-//             <div key={index} className="comment">
-//               <div className="comment-text">
-//                 <span className="comment-nickname">{comment.nickname}</span>
-//                 <span className="comment-date">{comment.date}</span>
-//                 <p>{comment.content}</p>
-//               </div>
-//               <div className="comment-actions">
-//                 <img
-//                   src={EditIcon}
-//                   alt="Edit"
-//                   className="edit-icon"
-//                   onClick={() => handleCommentEditButtonClick(comment)}
-//                 />
-//                 <img
-//                   src={DeleteIcon}
-//                   alt="Delete"
-//                   className="delete-icon"
-//                   onClick={handleCommentDeleteButtonClick}
-//                 />
-//               </div>
-//             </div>
-//           ))
-//         ) : (
-//           <div className="no-comments">
-//             <p className="primary-message">등록된 댓글이 없습니다.</p>
-//             <p className="secondary-message">가장 먼저 댓글을 등록해 보세요!</p>
-//           </div>
-//         )}
-//       </div>
-
-//       {/* MemoryEditModal Component */}
-//       <MemoryEditModal
-//         isOpen={isEditModalOpen}
-//         onClose={handleCloseModal}
-//         onSubmit={handleFormSubmit}
-//         memoryDetails={memoryDetail} // Passing the current memory details to the modal
-//       />
-//       <MemoryDeleteModal
-//         isOpen={isDeleteModalOpen}
-//         onClose={handleCloseModal}
-//         onDelete={handlePostDeletion} // Handling the deletion logic
-//         postId={memoryDetail.id} // Pass the post ID to the modal
-//       />
-//       <CommentModal
-//         isOpen={isCommentModalOpen}
-//         onClose={handleCloseModal}
-//         onSubmit={handleCommentSubmit}
-//       />
-//       <CommentEditModal
-//         isOpen={isCommentEditModalOpen}
-//         onClose={handleCloseModal}
-//         onSubmit={handleCommentUpdate}
-//         commentData={currentComment} // Pass the current comment data to the modal
-//       />
-//       <CommentDeleteModal
-//         isOpen={isCommentDeleteModalOpen}
-//         onClose={handleCloseModal}
-//         onDelete={handleCommentDelete}
-//       />
-//     </div>
-//   );
-// };
-
-// export default MemoryDetailPage;

@@ -124,10 +124,11 @@ const UploadMemory = (onClose) => {
   return (
     <div className="upload-memory-page">
       <Header />
+
+      <h1 className="page-title">추억 올리기</h1>
       <button className="close-button" onClick={onClose}>
         &times;
       </button>
-      <h1 className="page-title">추억 올리기</h1>
       <form className="memory-form" onSubmit={(e) => e.preventDefault()}>
         <div className="form-section">
           <div className="form-group">
@@ -233,7 +234,7 @@ const UploadMemory = (onClose) => {
             <label>추억의 순간</label>
             <input
               type="date"
-              value={moment}
+              value={moment ? new Date(moment).toISOString().split("T")[0] : ""}
               onChange={(e) => setMoment(e.target.value)}
             />
           </div>

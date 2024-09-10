@@ -1,14 +1,31 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./MemoryNav.css";
 import { ReactComponent as SearchIcon } from "../assets/icon=search.svg";
 import { useNavigate } from "react-router-dom";
-const MemoryNav = ({ groupId, viewPrivate, onToggleView, onSortChange }) => {
+const MemoryNav = ({
+  groupId,
+  viewPrivate,
+  onToggleView,
+  onSortChange,
+  onSearch,
+  onResetPosts,
+}) => {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedSort, setSelectedSort] = useState("likes");
   const navigate = useNavigate();
+  useEffect(() => {
+    onSortChange("likes"); // 페이지가 로드될 때 기본적으로 "공감순" 적용
+  }, [onSortChange]);
+
   const handleButtonClick = (view) => {
-    onToggleView(view === "private");
+    onToggleView(view === "public");
+
+    onResetPosts(); // 게시글 초기화 함수 호출;
   };
 
   const handleSortChange = (event) => {
+    const selected = event.target.value;
+    setSelectedSort(selected);
     onSortChange(event.target.value);
   };
   const handleUploadClick = () => {
@@ -20,7 +37,10 @@ const MemoryNav = ({ groupId, viewPrivate, onToggleView, onSortChange }) => {
       alert("그룹 ID가 없습니다.");
     }
   };
-
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
+    onSearch(event.target.value); // 검색어가 변경될 때마다 상위 컴포넌트로 전달
+  };
   return (
     <div className="memory-header-container">
       <div className="memory-nav-header">
@@ -29,33 +49,38 @@ const MemoryNav = ({ groupId, viewPrivate, onToggleView, onSortChange }) => {
           추억 올리기
         </button>
       </div>
-      <div className="memory-navbar-container">
-        <div className="memory-button-group">
+      <div className="navbar-container">
+        <div className="button-group">
           <button
-            className={`memory-nav-button ${!viewPrivate ? "active" : ""}`}
+            className={`nav-button ${!viewPrivate ? "active" : ""}`}
             onClick={() => handleButtonClick("public")}
           >
             공개
           </button>
           <button
-            className={`memory-nav-button ${viewPrivate ? "active" : ""}`}
+            className={`nav-button ${viewPrivate ? "active" : ""}`}
             onClick={() => handleButtonClick("private")}
           >
             비공개
           </button>
         </div>
-        <div className="memory-search-container">
+        <div className="search-container">
           <SearchIcon width="20px" height="20px" />
           <input
             className="search-input"
-            placeholder="태그 혹은 제목을 입력해 주세요"
+            placeholder="태그 혹은 그룹명을 검색해 주세요"
+            value={searchTerm}
+            onChange={handleSearchChange} // 검색어 입력 처리
           />
         </div>
-        <select className="memory-sort-dropdown" onChange={handleSortChange}>
+        <select
+          className="sort-dropdown"
+          value={selectedSort}
+          onChange={handleSortChange}
+        >
           <option value="likes">공감순</option>
           <option value="recent">최신순</option>
-          <option value="post">게시글 많은순</option>
-          <option value="badge">획득 배지순</option>
+          <option value="comment">댓글순</option>
         </select>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./CommentDeleteModal.css";
 
-const CommentDeleteModal = ({ isOpen, onClose, commentId }) => {
+const CommentDeleteModal = ({ isOpen, onClose, commentId, onDelete }) => {
   const [password, setPassword] = useState("");
 
   const handlePasswordChange = (e) => {
@@ -23,6 +23,7 @@ const CommentDeleteModal = ({ isOpen, onClose, commentId }) => {
       if (response.ok) {
         // const data = await response.json();
         alert("댓글이 성공적으로 삭제되었습니다.");
+        onDelete(commentId);
         onClose();
       } else if (response.status === 400) {
         alert("잘못된 요청입니다.");
