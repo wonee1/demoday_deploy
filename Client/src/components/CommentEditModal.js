@@ -1,38 +1,25 @@
 import React, { useState, useEffect } from "react";
 import "./CommentEditModal.css";
 
-const CommentEditModal = ({ isOpen, onClose, onSubmit, commentId }) => {
+const CommentEditModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  commentId,
+  commentDetails,
+}) => {
   const [nickname, setNickname] = useState("");
   const [comment, setComment] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); // 오류 메시지 상태 추가
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    if (commentId) {
-      console.log("Fetching comment with ID:", commentId); // commentId 확인용 로그
-
-      const fetchComment = async () => {
-        try {
-          const response = await fetch(`/api/comments/${commentId}`);
-          const contentType = response.headers.get("Content-Type");
-
-          // 응답이 JSON 형식인지 확인
-          if (contentType && contentType.includes("application/json")) {
-            const data = await response.json();
-            setNickname(data.nickname || "");
-            setComment(data.content || "");
-          } else {
-            throw new Error("Received non-JSON response");
-          }
-        } catch (error) {
-          console.error("Error fetching comment:", error);
-          setErrorMessage("댓글을 불러오는 중 오류가 발생했습니다.");
-        }
-      };
-
-      fetchComment();
+    // commentDetails가 변경되면 상태값을 다시 설정
+    if (commentDetails) {
+      setNickname(commentDetails.nickname || "");
+      setComment(commentDetails.content || "");
     }
-  }, [commentId]);
+  }, [commentDetails]);
 
   const handleSubmit = async () => {
     const updatedCommentData = {
@@ -105,8 +92,7 @@ const CommentEditModal = ({ isOpen, onClose, onSubmit, commentId }) => {
               required
             />
           </div>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}{" "}
-          {/* 오류 메시지 표시 */}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
           <button type="submit" onClick={handleSubmit}>
             수정하기
           </button>

@@ -9,9 +9,9 @@ import GroupDeleteModal from "../components/GroupDeleteModal";
 import MemoryNav from "../components/MemoryNav";
 import img2 from "../assets/image=img2.svg";
 import LikeIcon from "../assets/icon=flower.svg";
-import badge1 from "../assets/badge1.png"; // 7일 연속 추억 등록 배지 이미지
-import badge2 from "../assets/badge2.png"; // 추억 수 20개 이상 등록 배지 이미지
-import badge3 from "../assets/badge3.png"; // 그룹 공감 1만 개 이상 받기 배지 이미지
+// import badge1 from "../assets/badge1.svg"; // 7일 연속 추억 등록 배지 이미지
+// import badge2 from "../assets/badge2.svg"; // 추억 수 20개 이상 등록 배지 이미지
+// import badge3 from "../assets/badge3.svg"; // 그룹 공감 1만 개 이상 받기 배지 이미지
 
 const PublicDetailPage = () => {
   const { groupId } = useParams(); // URL에서 그룹 ID 가져옴
@@ -50,20 +50,18 @@ const PublicDetailPage = () => {
         const newBadges = [];
         // 배지 조건 체크
         if (response.data.postCount >= 20) {
-          newBadges.push({ label: "추억 20개 이상 등록", image: badge2 });
+          newBadges.push({ label: "🌼 추억 수 20개 이상 등록" });
         }
 
         if (response.data.likeCount >= 10000) {
           newBadges.push({
-            label: "그룹 공감 1만 개 이상 받기",
-            image: badge3,
+            label: "💖  게시글 공감 1만 개 이상 받기",
           });
         }
 
         if (response.data.hasMemoryWithLikes >= 10000) {
           newBadges.push({
-            label: "추억 공감 1만 개 이상 받기",
-            image: badge1,
+            label: "👾  7일 연속 추억 등록",
           });
         }
 
@@ -129,8 +127,17 @@ const PublicDetailPage = () => {
   const handleEditGroupSubmit = (updatedDetails) => {
     setGroupDetail(updatedDetails); // 수정된 정보로 상태 업데이트
     alert("그룹 정보가 성공적으로 수정되었습니다.");
+
     handleCloseModal(); // 모달 닫기
   };
+  // 숫자를 K 단위로 변환하는 함수
+  const formatCount = (count) => {
+    if (count >= 1000) {
+      return (count / 1000).toFixed(1) + "K"; // 1000 이상일 때 K로 변환
+    }
+    return count; // 1000 미만일 때는 그대로 숫자 표시
+  };
+
   if (!groupDetail) return <div>Loading...</div>;
 
   return (
@@ -162,18 +169,23 @@ const PublicDetailPage = () => {
           <div class="group-title-stats">
             <h1 className="group-title">{groupDetail.name}</h1>
             <div className="group-stats">
-              <span>추억: {groupDetail.postCount}</span>
-              <span> | 그룹 공감: {groupDetail.likeCount}</span>
+              <span className="stat-item">추억 : {groupDetail.postCount}</span>
+              <span className="pipe">|</span>
+              <span className="stat-item">
+                그룹 공감 : {formatCount(groupDetail.likeCount)}
+              </span>
             </div>
           </div>
           <p className="group-description">{groupDetail.introduction}</p>
-          <div className="badges-container">
-            {badges.map((badge, index) => (
-              <span key={index} className="badge">
-                <img src={badge.image} alt={badge.label} />
-                {badge.label}
-              </span>
-            ))}
+          <div className="badges-section">
+            <h3>획득 배지 {badges.length}</h3> {/* 배지 개수 추가 */}
+            <div className="badges-container">
+              {badges.map((badge, index) => (
+                <span key={index} className="custom-badge">
+                  {badge.label} {/* 배지 텍스트와 아이콘 표시 */}
+                </span>
+              ))}
+            </div>
             <div className="like-button-container">
               <button className="like-button" onClick={handleLikeClick}>
                 <img src={LikeIcon} alt="flower icon" className="flower-icon" />{" "}

@@ -22,6 +22,7 @@
 // export default App;
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import PrivateMemoryAccess from "./pages/PrivateMemoryAccess";
 import HomePage from "./pages/HomePage";
 import CreateGroupPage from "./pages/CreateGroupPage";
 import PrivateAccessPage from "./pages/PrivateAccessPage";
@@ -38,8 +39,12 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/create-group" element={<CreateGroupPage />} />
         <Route
-          path="/groups/:groupId/private-access"
+          path="/groups/private/access/:groupId"
           element={<PrivateAccessPage />}
+        />
+        <Route
+          path="/posts/private/access/:postId"
+          element={<PrivateMemoryAccess />}
         />
         <Route path="/groups/:groupId" element={<PublicDetailPage />} />{" "}
         {/* 그룹 상세 페이지 라우트 추가 */}

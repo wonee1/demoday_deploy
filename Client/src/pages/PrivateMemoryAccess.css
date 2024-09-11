@@ -1,0 +1,58 @@
+/* Container for the entire page content */
+.private-memory-access-container {
+  position: fixed; /* Fix it in the viewport */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh; /* Full viewport height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background-color: transparent; /* Slightly transparent background */
+  z-index: 1000; /* This should be lower than the header but higher than other elements */
+}
+
+/* Header should remain outside and not be part of the modal container */
+.private-memory-access-content {
+  z-index: 2001;
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  pointer-events: auto; /* Allow interactions with modal content */
+}
+
+.title {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.description {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+.password-input {
+  padding: 10px;
+  font-size: 16px;
+  width: 300px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.submit-button {
+  padding: 10px 20px;
+  font-size: 16px;
+  background-color: #282828;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.error-message {
+  color: #282828;
+  margin-bottom: 20px;
+}

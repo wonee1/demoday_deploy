@@ -1,66 +1,62 @@
-.private-access-page {
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  background-color: #fff;
+/* 전체 페이지 중앙 정렬 */
+.private-access-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  flex-direction: column;
+  background-color: transparent;
+  overflow: hidden;
+}
+
+.title {
+  font-size: 24px;
+  margin-bottom: 10px;
+  font-weight: bold;
   text-align: center;
 }
 
-.private-access-page h1 {
-  font-size: 1.8em;
-  margin-bottom: 20px;
-}
-
-.private-access-page p {
-  margin-bottom: 30px;
-  font-size: 1em;
+.description {
+  font-size: 16px;
   color: #666;
-}
-
-.form-group {
   margin-bottom: 20px;
+  text-align: center;
 }
 
-.form-group label {
-  display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
-  font-size: 0.9em;
+.password-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
 }
 
-.form-group input[type="password"] {
+.password-input {
   width: 100%;
   padding: 10px;
+  font-size: 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 1em;
-  box-sizing: border-box;
-  outline: none;
-  transition: border-color 0.3s ease;
-}
-
-.form-group input[type="password"]:focus {
-  border-color: #000;
-}
-
-.error-message {
-  color: red;
   margin-bottom: 20px;
-  font-size: 0.9em;
 }
 
 .submit-button {
   width: 100%;
-  padding: 15px;
+  padding: 12px;
   background-color: #282828;
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 4px;
-  font-size: 1em;
+  font-size: 16px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
 }
 
 .submit-button:hover {
-  background-color: #555;
+  background-color: #444;
+}
+
+.error-message {
+  color: #282828;
+  font-size: 14px;
+  margin-bottom: 20px;
 }

@@ -31,7 +31,7 @@ const MemoryList = ({ groupId, isPublic, sortBy = "likes", keyword }) => {
 
         let fetchedPosts = response.data.data;
 
-        // 정렬 로직
+        // Sorting logic
         const sortedPosts = [...fetchedPosts].sort((a, b) => {
           if (sortBy === "likes") {
             return b.likeCount - a.likeCount;
@@ -43,7 +43,7 @@ const MemoryList = ({ groupId, isPublic, sortBy = "likes", keyword }) => {
           return 0;
         });
 
-        setPosts(sortedPosts); // 정렬된 게시물을 상태로 설정
+        setPosts(sortedPosts); // Set sorted posts in state
         setTotalPages(response.data.totalPages);
       } catch (err) {
         setError(err.message);
@@ -55,10 +55,16 @@ const MemoryList = ({ groupId, isPublic, sortBy = "likes", keyword }) => {
     if (groupId) {
       fetchPosts();
     }
-  }, [groupId, isPublic, sortBy, keyword, page]); // 여기서 sortBy가 "likes"로 설정되어 있으면 기본 정렬 적용
+  }, [groupId, isPublic, sortBy, keyword, page]);
 
-  const handleCardClick = (postId) => {
-    navigate(`/posts/${postId}`); // 게시물 클릭 시 해당 게시물로 이동
+  const handleCardClick = (postId, isPublic) => {
+    if (isPublic) {
+      // If the post is public, navigate directly to the post details
+      navigate(`/posts/${postId}`);
+    } else {
+      // If the post is private, navigate to the access page
+      navigate(`/posts/private/access/${postId}`);
+    }
   };
 
   const handleUploadClick = () => {
@@ -76,9 +82,12 @@ const MemoryList = ({ groupId, isPublic, sortBy = "likes", keyword }) => {
           <div
             key={post.id}
             className="memory-card"
-            onClick={() => handleCardClick(post.id)}
+            onClick={() => handleCardClick(post.id, post.isPublic)} // Pass the public status
           >
-            <img src={post.imageUrl} alt={post.title} />
+            {/* Only show image if the post is public */}
+            {post.isPublic && post.imageUrl && (
+              <img src={post.imageUrl} alt={post.title} />
+            )}
             <div className="memory-info">
               <p className="nickname">
                 {post.nickname} <span className="pipe">|</span>
@@ -87,14 +96,22 @@ const MemoryList = ({ groupId, isPublic, sortBy = "likes", keyword }) => {
                 </span>
               </p>
               <h2>{post.title}</h2>
-              <div className="tags">
-                {post.tags.map((tag) => `#${tag}`).join(" ")}
-              </div>
+
+              {/* Only show tags if the post is public */}
+              {post.isPublic && (
+                <div className="tags">
+                  {post.tags.map((tag) => `#${tag}`).join(" ")}
+                </div>
+              )}
+
               <div className="like-comment-container">
-                <p className="moment">
-                  {post.location} ·{" "}
-                  {new Date(post.moment).toISOString().split("T")[0]}
-                </p>
+                {/* Only show location and moment if the post is public */}
+                {post.isPublic && (
+                  <p className="moment">
+                    {post.location} ·{" "}
+                    {new Date(post.moment).toISOString().split("T")[0]}
+                  </p>
+                )}
                 <div className="like-comment">
                   <span>
                     <img src={LikeIcon} alt="Like" />

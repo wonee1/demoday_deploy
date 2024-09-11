@@ -1,84 +1,67 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import "./PrivateAccessPage.css";
-import Header from "../components/Header";
-import PrivateAccessModal from "../components/PrivateAccessModal"; // Import the PrivateAccessModal component
+import axios from "axios";
+import "./PrivateAccessPage.css"; // Optional: CSS for styling
+import Header from "../components/Header"; // Header 컴포넌트 임포트
 
 const PrivateAccessPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [showModal, setShowModal] = useState(false); // State to control modal visibility
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { groupId } = useParams();
+  const { groupId } = useParams(); // Get the groupId from the URL if necessary
 
-  const handlePasswordSubmit = async (e) => {
-    e.preventDefault();
-    setError(""); // Clear existing error message
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
 
     try {
-      const response = await fetch(`/api/groups/${groupId}/verify-password`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ password }),
-      });
+      const response = await axios.post(
+        `/api/groups/${groupId}/verify-password`,
+        {
+          password: password,
+        }
+      );
 
-      if (response.ok) {
-        // On successful password verification, navigate to the group details page
-        navigate(`/groups/${groupId}`);
-      } else if (response.status === 401) {
-        // Handle incorrect password error
-        setError("비밀번호가 틀렸습니다");
-        setShowModal(true); // Show the modal on error
-      } else {
-        // Handle other errors
-        const errorData = await response.json();
-        setError(errorData.message || "비밀번호 확인 중 오류가 발생했습니다.");
-        setShowModal(true); // Show the modal on error
+      if (response.status === 200) {
+        navigate(`/groups/${groupId}`); // Navigate to the private group page on success
       }
     } catch (error) {
-      console.error("비밀번호 확인 중 오류 발생:", error);
-      setError("비밀번호 확인 중 문제가 발생했습니다.");
-      setShowModal(true); // Show the modal on error
+      if (error.response && error.response.status === 401) {
+        setError("비밀번호가 일치하지 않습니다. 다시 시도해주세요.");
+      } else {
+        setError("문제가 발생했습니다. 다시 시도해주세요.");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleCloseModal = () => {
-    setShowModal(false);
-  };
-
   return (
-    <div className="private-access-page">
-      <div className="header-container">
-        <Header />
-      </div>
-      <h1>비공개 그룹</h1>
-      <p>비공개 그룹에 접근하기 위해 관련 권한이 필요합니다.</p>
-      <form onSubmit={handlePasswordSubmit}>
-        <div className="form-group">
-          <label htmlFor="password">비밀번호 입력</label>
+    <div>
+      <Header /> {/* 화면 상단에 헤더 추가 */}
+      <div className="private-access-container">
+        <h1 className="title">비공개 그룹</h1>
+        <p className="description">
+          비공개 그룹에 접근하기 위해 비밀번호 입력이 필요합니다.
+        </p>
+
+        <form onSubmit={handleSubmit} className="password-form">
           <input
             type="password"
-            id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="그룹 비밀번호를 입력해 주세요"
-            required
+            className="password-input"
+            disabled={loading}
           />
-        </div>
-        {error && <p className="error-message">{error}</p>}
-        <button type="submit" className="submit-button">
-          제출하기
-        </button>
-      </form>
-      {/* Render the PrivateAccessModal component */}
-      <PrivateAccessModal
-        show={showModal}
-        onClose={handleCloseModal}
-        title="비공개 그룹 접근 실패"
-        message={error}
-      />
+          {error && <p className="error-message">{error}</p>}
+          <button type="submit" className="submit-button" disabled={loading}>
+            {loading ? "확인 중..." : "제출하기"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

@@ -16,9 +16,20 @@ const PublicCard = ({ group, showBadges = true, showImage = true }) => {
       console.error("Failed to like group:", error);
     }
   };
+  // 숫자를 K 단위로 변환하는 함수
+  const formatLikeCount = (likeCount) => {
+    if (likeCount >= 1000) {
+      return (likeCount / 1000).toFixed(1) + "K"; // 1000 이상일 때 K로 변환
+    }
+    return likeCount; // 1000 미만일 때는 그대로 숫자 표시
+  };
 
   const handleCardClick = () => {
-    navigate(`/groups/${group.id}`); // 클릭한 그룹의 ID로 이동
+    if (group.isPublic) {
+      navigate(`/groups/${group.id}`); // 공개 그룹은 바로 상세 페이지로 이동
+    } else {
+      navigate(`/groups/private/access/${group.id}`); // 비공개 그룹은 비밀번호 입력 페이지로 이동
+    }
   };
 
   return (
@@ -61,7 +72,7 @@ const PublicCard = ({ group, showBadges = true, showImage = true }) => {
             <span>그룹 공감</span>
             <div className="like-container" onClick={handleLike}>
               <LikeIcon width="16px" height="16px" />
-              <span>{group.likeCount}K</span>
+              <span>{formatLikeCount(group.likeCount)}</span>
             </div>
           </div>
         </div>

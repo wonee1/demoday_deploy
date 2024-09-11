@@ -284,6 +284,7 @@ const MemoryDetailPage = () => {
         onClose={handleCloseModal}
         commentId={currentComment?.id} // 선택된 댓글의 ID를 전달
         onSubmit={handleCommentEdit} // 수정 후 처리할 함수
+        commentDetails={currentComment} // commentDetails로 현재 선택한 댓글 데이터를 전달
       />
       <CommentDeleteModal
         isOpen={isCommentDeleteModalOpen}
