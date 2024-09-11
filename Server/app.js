@@ -26,11 +26,11 @@ app.use("/api/comments", commentRoutes); // 댓글 관련 라우트 연결
 require("./cronJobs"); // cronJobs.js 파일 실행
 
 // React의 빌드된 정적 파일을 제공
-app.use(express.static(path.join(__dirname, "../client/build")));
+app.use(express.static(path.join(__dirname, "../Client/build")));
 
 // 모든 경로에 대해 React의 index.html을 반환 (React 라우팅 처리)
 app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../client/build", "index.html"));
+  res.sendFile(path.join(__dirname, "../Client/build", "index.html"));
 });
 
 const PORT = process.env.PORT || 5000;
