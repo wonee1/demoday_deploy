@@ -4,5 +4,23 @@
 
 ---
 
+**프레임 워크 :Node.js express, React** 
+
+
+**언어: javascrpit, httml, css** 
+
+
+**데이터베이스: Postgrseql**
+
+
+**ORM: prisma 사용**
+
+
+
+
+---
+
+**배포: Render로 진행**
+
 
 
