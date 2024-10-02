@@ -2,7 +2,8 @@
 
 
 ### 💡 프로젝트 소개
----
+<hr style="border: 1px solid lightgray;" />
+
 
 성신여자대학교 코드잇 부스트 데모데이 프로젝트 소개 페이지 입니다.
 
@@ -11,24 +12,29 @@
 
 
 ### 🕰️ 개발 기간
----
+<hr style="border: 1px solid lightgray;" />
+
 **2024. 8. 18(화) ~ 2024. 9. 12(금)**
 
 
 ### 👩‍💻 개발 팀원 
----
+<hr style="border: 1px solid lightgray;" />
+
+
 **FE: 황지은**
 **BE: 김채원**
 
 
 
 ### 📌 주요 기능
----
+<hr style="border: 1px solid lightgray;" />
+
 
 
 
 ### 🔧사용한 스택
----
+<hr style="border: 1px solid lightgray;" />
+
 
 **프레임 워크 : <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">
 <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">** 
@@ -45,7 +51,7 @@
 
 
 ### 🔗 링크
----
+<hr style="border: 1px solid lightgray;" />
 
 
 **배포 링크 : https://demoday-deploy.onrender.com/**
