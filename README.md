@@ -32,9 +32,9 @@ ___
 ### 📌 주요 기능
 ___
 
-- 게시글 업로드 및 그룹 생성
-- 댓글 기능
-- CRUD 기능 (Create, Read, Update, Delete) 등
+**- 게시글 업로드 및 그룹 생성**
+**- 댓글 기능**
+**- CRUD 기능 (Create, Read, Update, Delete) 등**
 
 <br>
 
