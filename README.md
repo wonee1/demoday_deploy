@@ -15,7 +15,8 @@
 
 ---
 
-**프레임 워크 :Node.js express, React** 
+**프레임 워크 : <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">
+<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">** 
 
 
 **언어: javascrpit, httml, css** 
