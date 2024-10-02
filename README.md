@@ -13,8 +13,8 @@
 **2024. 8. 18(화) ~ 2024. 9. 12(금)**
 
 
+### 🔧사용한 스택
 
----
 
 **프레임 워크 : <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=Node.js&logoColor=white">
 <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white">** 
@@ -26,9 +26,10 @@
 **데이터베이스: <img src="https://img.shields.io/badge/Postgresql-4169E1?style=flat-square&logo=Postgresql&logoColor=white"/>**
 
 
----
-
 **배포: <img src="https://img.shields.io/badge/render-000000?style=flat-square&logo=render&logoColor=white"/>**
+
+
+### 🔗 링크
 
 **배포 링크 : https://demoday-deploy.onrender.com/**
 
