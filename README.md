@@ -20,11 +20,6 @@
 **데이터베이스: <img src="https://img.shields.io/badge/Postgresql-4169E1?style=flat-square&logo=Postgresql&logoColor=white"/>**
 
 
-**ORM: prisma 사용**
-
-
-
-
 ---
 
 **배포: Render로 진행**
