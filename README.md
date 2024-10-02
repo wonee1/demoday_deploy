@@ -22,7 +22,7 @@
 
 ---
 
-**배포: Render로 진행**
+**배포: <img src="https://img.shields.io/badge/render-000000?style=flat-square&logo=render&logoColor=white"/>**
 
 **배포 링크 : https://demoday-deploy.onrender.com/**
 
