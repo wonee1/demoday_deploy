@@ -9,7 +9,6 @@ ___
 
 본 프로젝트는 **기억 저장 및 공유 서비스**로, 사용자들이 자신의 소중한 기억과 경험을 기록하고 다른 사용자들과 공유할 수 있는 웹 애플리케이션 플랫폼입니다. 특정 순간에 대한 기록을 남기고, 다른 사람들의 추억을 통해 영감을 얻을 수 있도록 설계되었습니다.
 
-![image](https://github.com/user-attachments/assets/3ef01423-655f-4cc1-aceb-4d1727ca43e1)
 
 
 <br>
@@ -70,5 +69,7 @@ ___
 ___
 
 
-**link : https://demoday-deploy.onrender.com/**
+**배포 링크 : https://demoday-deploy.onrender.com/**
+
+**시연 영상 : https://www.youtube.com/watch?v=MNFbg0_YPwo**
 
